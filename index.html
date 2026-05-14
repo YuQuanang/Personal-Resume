@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yu Quan Ang — Portfolio</title>
+  <meta name="description" content="Yu Quan Ang — Computer Science & Business Graduate from NTU Singapore. Data analyst, system integrator, and NTU Golf Club President." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+
+  <div id="cursor-dot" class="cursor-dot"></div>
+  <div id="cursor-ring" class="cursor-ring">
+    <span id="cursor-label" class="cursor-label"></span>
+  </div>
+  <div id="curtain" class="curtain"></div>
+
+  <!-- NAV -->
+  <nav id="nav" class="nav">
+    <a href="#hero" class="nav-logo" data-cursor="link">
+      <span class="nav-logo-name">Yu Quan Ang</span>
+      <span class="nav-logo-dot">®</span>
+    </a>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" data-cursor="link">
+      <span></span><span></span>
+    </button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#about"      data-cursor="link">About</a></li>
+      <li><a href="#experience" data-cursor="link">Experience</a></li>
+      <li><a href="#leadership" data-cursor="link">Leadership</a></li>
+      <li><a href="#skills"     data-cursor="link">Skills</a></li>
+      <li><a href="#projects"   data-cursor="link">Projects</a></li>
+      <li><a href="#contact"    data-cursor="link">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" class="hero section">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow reveal-line">Computer Science &amp; Business · Blockchain · Golf · Photography</p>
+      <h1 class="hero-title">
+        <span class="hero-title-line"><span class="reveal-mask"><em>Yu</em> Quan</span></span>
+        <span class="hero-title-line"><span class="reveal-mask">Ang.</span></span>
+      </h1>
+      <p class="hero-tagline reveal-line">Building data-driven solutions and bridging technology with business strategy.</p>
+    </div>
+    <div class="hero-scroll-indicator">
+      <span>Scroll to explore</span>
+      <div class="scroll-arrow">
+        <svg width="16" height="24" viewBox="0 0 16 24" fill="none"><path d="M8 0v20M1 13l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <span>Singapore</span>
+      <span class="hero-meta-sep">·</span>
+      <span id="hero-time">—</span>
+    </div>
+  </section>
+
+  <!-- 01 · ABOUT -->
+  <section id="about" class="section section--alt" data-section-id="about">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-number reveal-fade">01</span>
+        <h2 class="section-title reveal-lines">About<br /><em>Me</em></h2>
+      </div>
+      <div class="about-grid">
+        <div class="about-bio">
+          <p class="about-lead reveal-lines">
+            Hi, I'm <strong>Yu Quan Ang</strong> — a recent Computer Science Graduate from Nanyang Technological University with a Second Major in Business.
+          </p>
+          <p class="about-body reveal-lines">
+            I'm passionate about leveraging technology to solve real-world problems, with hands-on experience in system integration, data analytics, and software development across healthcare and government sectors. From deploying enterprise healthcare platforms to automating data pipelines at the Land Transport Authority, I bring both technical depth and strong cross-functional communication to every team I join.
+          </p>
+          <p class="about-body reveal-lines">
+            Beyond the screen, I've led the NTU Golf Club as President — organising events for over 200 members and building a team culture grounded in inclusivity and continuous improvement.
+          </p>
+          <div class="about-links reveal-fade">
+            <a href="mailto:angyuquan12@gmail.com" class="pill-link" data-cursor="link" title="angyuquan12@gmail.com">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+              angyuquan12@gmail.com
+            </a>
+            <a href="tel:+6598681152" class="pill-link" data-cursor="link" title="+65 9868 1152">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.63 3.41 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.92 16.92z"/></svg>
+              +65 9868 1152
+            </a>
+            <!-- GitHub logo only -->
+            <a href="https://github.com/YuQuanang" target="_blank" rel="noopener" class="pill-link pill-link--icon" data-cursor="link" title="GitHub">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="GitHub"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+            </a>
+            <!-- LinkedIn logo only -->
+            <a href="https://www.linkedin.com/in/yuquanang/" target="_blank" rel="noopener" class="pill-link pill-link--icon" data-cursor="link" title="LinkedIn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="LinkedIn"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM6.84 20.45H3.84V9h3v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+            </a>
+            <!-- Instagram logo only -->
+            <a href="https://www.instagram.com/walterquan_/" target="_blank" rel="noopener" class="pill-link pill-link--icon" data-cursor="link" title="@walterquan_">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="Instagram"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="about-sidebar">
+          <div class="about-photo-frame reveal-fade">
+            <div class="about-photo-placeholder">
+              <span>YQA</span>
+            </div>
+          </div>
+          <div class="about-facts reveal-fade">
+            <div class="fact">
+              <span class="fact-label">Degree</span>
+              <span class="fact-value">BSc Computer Science, 2nd Major Business</span>
+            </div>
+            <div class="fact">
+              <span class="fact-label">University</span>
+              <span class="fact-value">Nanyang Technological University</span>
+            </div>
+            <div class="fact">
+              <span class="fact-label">GPA</span>
+              <span class="fact-value">4.37 / 5.0</span>
+            </div>
+            <div class="fact">
+              <span class="fact-label">Graduated</span>
+              <span class="fact-value">May 2026</span>
+            </div>
+            <div class="fact">
+              <span class="fact-label">Status</span>
+              <span class="fact-value fact-value--green">Open to opportunities</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · EXPERIENCE -->
+  <section id="experience" class="section" data-section-id="experience">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-number reveal-fade">02</span>
+        <h2 class="section-title reveal-lines">Internship<br /><em>Experience</em></h2>
+      </div>
+      <div class="timeline">
+
+        <div class="timeline-item reveal-item">
+          <div class="timeline-meta">
+            <span class="timeline-date">Jan 2025 — Jun 2025</span>
+            <span class="timeline-type">Internship</span>
+          </div>
+          <div class="timeline-content">
+            <h3 class="timeline-role">System Analyst Intern</h3>
+            <p class="timeline-company">Synexe</p>
+            <ul class="timeline-points">
+              <li>Led system integration of the NGEMR platform with SingHealth's Queue Management System, coordinating technical requirements across multiple stakeholder groups</li>
+              <li>Orchestrated cross-functional collaboration with vendors and clinical users, driving 100% on-time delivery using waterfall project methodology</li>
+              <li>Managed full-cycle SDLC activities spanning requirements gathering, system integration, deployment, and stakeholder alignment across concurrent workstreams</li>
+              <li>Reduced implementation delays by 20% against baseline KPIs through parallel workstream management and process optimisation</li>
+            </ul>
+            <div class="timeline-tags">
+              <span class="tag">SDLC</span>
+              <span class="tag">System Integration</span>
+              <span class="tag">Waterfall PM</span>
+              <span class="tag">Healthcare IT</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal-item">
+          <div class="timeline-meta">
+            <span class="timeline-date">May 2024 — Jul 2024</span>
+            <span class="timeline-type">Internship</span>
+          </div>
+          <div class="timeline-content">
+            <h3 class="timeline-role">Data Analyst Intern</h3>
+            <p class="timeline-company">Land Transport Authority</p>
+            <ul class="timeline-points">
+              <li>Partnered with data engineers to analyse, visualise, and present operational data via Python-powered dashboards, enabling data-driven decision-making for engineering and management teams</li>
+              <li>Automated and streamlined legacy Python data pipelines, significantly reducing analysis turnaround time and freeing engineering bandwidth for higher-value tasks</li>
+              <li>Fostered cross-functional alignment by presenting analytical findings in weekly stand-ups with engineering teams and senior management, consistently meeting tight delivery deadlines</li>
+            </ul>
+            <div class="timeline-tags">
+              <span class="tag">Python</span>
+              <span class="tag">Data Pipelines</span>
+              <span class="tag">Dashboards</span>
+              <span class="tag">SQL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal-item">
+          <div class="timeline-meta">
+            <span class="timeline-date">Feb 2022 — Jul 2022</span>
+            <span class="timeline-type">Internship</span>
+          </div>
+          <div class="timeline-content">
+            <h3 class="timeline-role">UAT Tester</h3>
+            <p class="timeline-company">NETS</p>
+            <ul class="timeline-points">
+              <li>Collaborated in a cross-functional team diagnosing and evaluating UAT systems, ensuring reliability and functionality through structured test cases</li>
+              <li>Demonstrated technical aptitude working across different systems, platforms, and applications with a team of 4 members</li>
+              <li>Leveraged Excel for test data management, result analysis, and reporting</li>
+              <li>Identified and documented defects leading to multiple defect resolutions, improving system usability</li>
+            </ul>
+            <div class="timeline-tags">
+              <span class="tag">UAT</span>
+              <span class="tag">Test Cases</span>
+              <span class="tag">Excel</span>
+              <span class="tag">QA</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · LEADERSHIP -->
+  <section id="leadership" class="section section--alt" data-section-id="leadership">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-number reveal-fade">03</span>
+        <h2 class="section-title reveal-lines">Leadership<br /><em>Experience</em></h2>
+      </div>
+      <div class="timeline">
+
+        <div class="timeline-item reveal-item">
+          <div class="timeline-meta">
+            <span class="timeline-date">Aug 2023 — Jun 2024</span>
+            <span class="timeline-type">President</span>
+          </div>
+          <div class="timeline-content">
+            <h3 class="timeline-role">President</h3>
+            <p class="timeline-company">NTU Golf Club</p>
+            <ul class="timeline-points">
+              <li>Spearheaded revitalisation of the Golf Club by implementing 3 new engagement strategies, elevating member experience and growing engagement levels</li>
+              <li>Organised tournaments and networking sessions for over 200 members across special occasions and club events</li>
+              <li>Coordinated equipment procurement and inventory management, ensuring seamless operations during training sessions and events</li>
+              <li>Led a 12-person EXCO team through club hosting events and strategic planning meetings</li>
+            </ul>
+            <div class="timeline-tags">
+              <span class="tag">Leadership</span>
+              <span class="tag">Event Management</span>
+              <span class="tag">200+ Members</span>
+              <span class="tag">Strategy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeline-item reveal-item">
+          <div class="timeline-meta">
+            <span class="timeline-date">Sep 2022 — Aug 2023</span>
+            <span class="timeline-type">Captain</span>
+          </div>
+          <div class="timeline-content">
+            <h3 class="timeline-role">Captain</h3>
+            <p class="timeline-company">NTU Golf Club</p>
+            <ul class="timeline-points">
+              <li>Led strategic planning of weekly training programmes for over 200 members, focusing on individual skill improvement and team cohesion</li>
+              <li>Curated proposals for university-level events and managed business relations with external stakeholders</li>
+              <li>Grew club membership by 20% by partnering with an external coaching school to raise player quality</li>
+              <li>Delivered effective coaching and communication during weekly training sessions</li>
+            </ul>
+            <div class="timeline-tags">
+              <span class="tag">Coaching</span>
+              <span class="tag">Stakeholder Management</span>
+              <span class="tag">Training</span>
+              <span class="tag">Growth +20%</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · SKILLS -->
+  <section id="skills" class="section" data-section-id="skills">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-number reveal-fade">04</span>
+        <h2 class="section-title reveal-lines">Skills &amp;<br /><em>Tools</em></h2>
+      </div>
+      <div class="skills-grid">
+
+        <div class="skill-category reveal-item">
+          <h3 class="skill-category-title">Languages</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">SQL</span>
+            <span class="skill-tag">Solidity</span>
+            <span class="skill-tag">HTML / CSS</span>
+          </div>
+        </div>
+
+        <div class="skill-category reveal-item">
+          <h3 class="skill-category-title">Frameworks &amp; Libraries</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Vue</span>
+            <span class="skill-tag">Firebase</span>
+            <span class="skill-tag">Node.js</span>
+            <span class="skill-tag">Pandas</span>
+            <span class="skill-tag">NumPy</span>
+            <span class="skill-tag">Matplotlib</span>
+            <span class="skill-tag">RestAPI</span>
+          </div>
+        </div>
+
+        <div class="skill-category reveal-item">
+          <h3 class="skill-category-title">Tools &amp; Platforms</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Git</span>
+            <span class="skill-tag">Excel</span>
+            <span class="skill-tag">Tableau</span>
+            <span class="skill-tag">Microsoft Office Suite</span>
+            <span class="skill-tag">Figma</span>
+            <span class="skill-tag">PostgreSQL</span>
+            <span class="skill-tag">Network Attached Storage(NAS)</span>
+          </div>
+        </div>
+
+        <div class="skill-category reveal-item">
+          <h3 class="skill-category-title">Methodologies</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Waterfall</span>
+            <span class="skill-tag">Agile / Scrum</span>
+            <span class="skill-tag">SDLC</span>
+            <span class="skill-tag">UAT</span>
+            <span class="skill-tag">Data Analytics</span>
+            <span class="skill-tag">System Integration</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · PROJECTS -->
+  <section id="projects" class="section section--alt" data-section-id="projects">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-number reveal-fade">05</span>
+        <h2 class="section-title reveal-lines">Selected<br /><em>Projects</em></h2>
+      </div>
+      <div class="projects-grid projects-grid--3">
+
+        <article class="project-card reveal-item" data-cursor="link">
+          <div class="project-card-inner">
+            <div class="project-card-front">
+              <div class="project-number">001 · Final Year Project</div>
+              <h3 class="project-title">ShiokPay</h3>
+              <p class="project-tech">React · Solidity · Arbitrum · IPFS · Goldsky</p>
+            </div>
+            <div class="project-card-overlay">
+              <p class="project-desc">Blockchain cashback rewards DApp on Arbitrum Sepolia hosting hundreds of users. Solo PM — defined the MVP roadmap translating user reward incentives into smart contract logic and 5 functional DApp features.</p>
+              <div class="project-links">
+                <a href="https://github.com/YuQuanang/FYP2025" class="project-link project-link--icon" target="_blank" rel="noopener" title="GitHub">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="GitHub"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal-item" data-cursor="link">
+          <div class="project-card-inner">
+            <div class="project-card-front">
+              <div class="project-number">002 · Frontend Developer</div>
+              <h3 class="project-title">SIAM FEE</h3>
+              <p class="project-tech">Vue.js · Firebase · REST APIs · UX Design</p>
+            </div>
+            <div class="project-card-overlay">
+              <p class="project-desc">Real-time carpark finder solving high urban parking costs. Integrated datasets from multiple third-party APIs into a pricing &amp; availability dashboard with 100% feature parity across desktop and mobile.</p>
+              <div class="project-links">
+                <a href="https://github.com/YuQuanang/SC2006_SWE_Project" class="project-link project-link--icon" target="_blank" rel="noopener" title="GitHub">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="GitHub"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="project-card reveal-item" data-cursor="link">
+          <div class="project-card-inner">
+            <div class="project-card-front">
+              <div class="project-number">003 · Full-Stack &amp; AI</div>
+              <h3 class="project-title">PAaaS</h3>
+              <p class="project-tech">React · Node.js · LangGraph · Llama 3.1 · OAuth</p>
+            </div>
+            <div class="project-card-overlay">
+              <p class="project-desc">Personal Assistant-as-a-Service. Local LLM (Llama 3.1 via Ollama) orchestrated with LangGraph — translating natural-language prompts into API calls across Calendar, Tasks, and Email via Google OAuth.</p>
+              <div class="project-links">
+                <a href="https://github.com/YuQuanang/PersonalAssistant-As-a-Service" class="project-link project-link--icon" target="_blank" rel="noopener" title="GitHub">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-label="GitHub"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · INTERESTS -->
+  <section id="interests" class="section" data-section-id="interests">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-number reveal-fade">06</span>
+        <h2 class="section-title reveal-lines">Interests &amp;<br /><em>Beyond</em></h2>
+      </div>
+      <div class="interests-list">
+
+      <div class="interest-item reveal-item">
+        <span class="interest-icon">⛳</span>
+        <div class="interest-body">
+          <h3 class="interest-title">Golf</h3>
+          <p class="interest-desc">A dedicated golfer and President of the NTU Golf Club. Drawn to the precision, strategy, and mental discipline the game demands, whether mapping out complex course strategies or working to beat my current personal best of 73.</p>
+          <div class="interest-links">
+            <a href="https://www.instagram.com/walterquan_/" target="_blank" rel="noopener" class="interest-social" data-cursor="link" title="@walterquan_">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-label="Instagram"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+              <span>@walterquan_</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="interest-item reveal-item">
+        <span class="interest-icon">📸</span>
+        <div class="interest-body">
+          <h3 class="interest-title">Landscape Photography</h3>
+          <p class="interest-desc">Passionate about capturing the natural beauty of sweeping landscapes and golf courses. Armed with an Olympus Micro Four Thirds system, I enjoy exploring the technical interplay of light, framing, and glass to tell compelling visual stories.</p>
+          <div class="interest-links">
+            <a href="https://www.instagram.com/walterquanpics/" target="_blank" rel="noopener" class="interest-social" data-cursor="link" title="@walterquanpics">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-label="Instagram"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+              <span>@walterquanpics</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="interest-item reveal-item">
+        <span class="interest-icon">⛓️</span>
+        <div class="interest-body">
+          <h3 class="interest-title">Web3 &amp; Blockchain</h3>
+          <p class="interest-desc">Fascinated by the future of decentralized finance and smart contract development. I enjoy building and deploying real-world applications on networks like Arbitrum, turning complex architecture into seamless, user-centric reward systems.</p>
+        </div>
+      </div>
+
+      <div class="interest-item reveal-item">
+        <span class="interest-icon">🏗️</span>
+        <div class="interest-body">
+          <h3 class="interest-title">Systems Analysis &amp; Product Management</h3>
+          <p class="interest-desc">Passionate about understanding how complex technical systems—from intricate healthcare IT integrations to scalable consumer apps—fit together. Driven to bridge the gap between business strategy and technical execution to build products that genuinely impact people.</p>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · CONTACT -->
+  <section id="contact" class="section section--alt section--contact" data-section-id="contact">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-number reveal-fade">07</span>
+      </div>
+      <div class="contact-block">
+        <p class="contact-eyebrow reveal-line">Let's connect</p>
+        <h2 class="contact-title reveal-lines">Get In<br /><em>Touch.</em></h2>
+        <p class="contact-body reveal-lines">
+          Whether you're a recruiter, potential collaborator, or just want to say hi —
+          I'd love to hear from you. I'll get back to you as soon as I can!
+        </p>
+        <div class="contact-cta reveal-fade">
+          <a href="https://www.instagram.com/walterquan_/" target="_blank" rel="noopener" class="cta-button" data-cursor="link" id="contact-email-btn">
+            Say Hello →
+          </a>
+        </div>
+        <div class="contact-socials reveal-fade">
+          <!-- GitHub logo -->
+          <a href="https://github.com/YuQuanang" target="_blank" rel="noopener" class="social-link social-link--icon" data-cursor="link" title="GitHub">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-label="GitHub"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.03c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5.99.11-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02.005 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.21.7.82.58C20.57 21.8 24 17.3 24 12 24 5.37 18.63 0 12 0z"/></svg>
+          </a>
+          <span class="social-sep">·</span>
+          <!-- LinkedIn logo -->
+          <a href="https://www.linkedin.com/in/yuquanang/" target="_blank" rel="noopener" class="social-link social-link--icon" data-cursor="link" title="LinkedIn">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-label="LinkedIn"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM6.84 20.45H3.84V9h3v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.22.79 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+          </a>
+          <span class="social-sep">·</span>
+          <!-- Instagram logo -->
+          <a href="https://www.instagram.com/walterquan_/" target="_blank" rel="noopener" class="social-link social-link--icon" data-cursor="link" title="@walterquan_">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-label="Instagram"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+          </a>
+          <span class="social-sep">·</span>
+          <a href="mailto:angyuquan12@gmail.com" class="social-link social-link--icon" data-cursor="link" title="angyuquan12@gmail.com">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-label="Email"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>
+          </a>
+          <span class="social-sep">·</span>
+          <a href="tel:+6598681152" class="social-link" data-cursor="link">+65 9868 1152</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p class="footer-copy">© Yu Quan Ang 2026</p>
+      <p class="footer-made">
+        <span class="footer-green-dot">●</span> Open to opportunities
+      </p>
+    </div>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
