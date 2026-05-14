@@ -2,8 +2,8 @@
    DESIGN TOKENS — Masters Golf Theme
 ═══════════════════════════════════════════ */
 :root {
-  --bg:           #0a0f0a;
-  --bg-alt:       #0f160f;
+  --bg:           #040a04;
+  --bg-alt:       rgba(6, 12, 6, 0.82);
   --green:        #006747;
   --green-light:  #1a8a5e;
   --yellow:       #F5C518;
@@ -24,7 +24,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: auto; }
 body {
-  background: var(--bg);
+  background: #030704; /* dark fallback behind parallax image */
   color: var(--text);
   font-family: var(--font-sans);
   font-weight: 400;
@@ -154,14 +154,21 @@ body.cursor-drag .cursor-ring {
 /* ═══════════════════════════════════════════
    SECTIONS
 ═══════════════════════════════════════════ */
-.section { padding: 9rem 0; }
-.section--alt { background: var(--bg-alt); }
+.section { padding: 9rem 0; background: rgba(4, 10, 4, 0.48); }
+.section--alt { background: rgba(4, 10, 4, 0.80); }
 .section-header { display: flex; align-items: flex-start; gap: 2rem; margin-bottom: 5rem; }
 .section-number {
-  font-family: var(--font-mono); font-size: 0.78rem;
-  color: var(--yellow); letter-spacing: 0.12em;
-  margin-top: 0.6rem; white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 5rem);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--yellow);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-top: 0.1rem;
+  white-space: nowrap;
   opacity: 0; /* GSAP controls */
+  flex-shrink: 0;
 }
 .section-title {
   font-family: var(--font-serif);
@@ -171,8 +178,36 @@ body.cursor-drag .cursor-ring {
 .section-title em { color: var(--green-light); font-style: italic; }
 
 /* Split line containers — GSAP SplitText replacement */
-.split-line { overflow: hidden; display: block; }
+.split-line {
+  overflow: hidden;
+  display: block;
+  /* Extra breathing room so Playfair descenders (j,g,y,p) and
+     ascenders (S,P,T) are never clipped by overflow:hidden      */
+  padding-top: 0.1em;
+  padding-bottom: 0.16em;
+  margin-top: -0.1em;
+  margin-bottom: -0.16em;
+}
 .split-line-inner { display: block; transform: translateY(110%); }
+
+/* ═══════════════════════════════════════════
+   PARALLAX BACKGROUND
+   — Fixed to viewport, never runs out.
+   — JS shifts background-position-y (0%→70%) as user scrolls.
+   — image covers viewport at all times via background-size:cover
+═══════════════════════════════════════════ */
+.parallax-bg {
+  position: fixed;
+  inset: 0;              /* always exactly viewport-sized */
+  z-index: -2;
+  background-image: url('../images/augusta-forest.jpg');
+  background-size: cover;
+  background-position: center 30%; /* JS morphs the Y% */
+  /* Dark tint: low brightness keeps text readable, slight green shift */
+  filter: brightness(0.22) saturate(0.75) hue-rotate(8deg);
+  pointer-events: none;
+  will-change: background-position;
+}
 
 /* ═══════════════════════════════════════════
    HERO

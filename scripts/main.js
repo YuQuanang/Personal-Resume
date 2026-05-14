@@ -13,13 +13,25 @@ const lenis = new Lenis({
   easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
   smooth: true,
 });
-
-// Bridge Lenis into GSAP's RAF
 gsap.ticker.add(time => lenis.raf(time * 1000));
 gsap.ticker.lagSmoothing(0);
-
-// Bridge Lenis scroll position to ScrollTrigger
 lenis.on('scroll', ScrollTrigger.update);
+
+/* ═══════════════════════════════════════════
+   PARALLAX BACKGROUND
+   Shifts background-position-y 20% → 80% as page scrolls.
+   Image is always cover-sized to viewport — can never "run out".
+═══════════════════════════════════════════ */
+const parallaxBg = document.getElementById('parallax-bg');
+if (parallaxBg) {
+  lenis.on('scroll', ({ scroll, limit }) => {
+    // progress: 0 at top, 1 at bottom of page
+    const progress = limit > 0 ? scroll / limit : 0;
+    // shift focal point from 20% (top of image) to 80% (bottom of image)
+    const bgY = 20 + progress * 60;
+    parallaxBg.style.backgroundPositionY = bgY + '%';
+  });
+}
 
 /* ═══════════════════════════════════════════
    LIVE CLOCK
@@ -27,7 +39,7 @@ lenis.on('scroll', ScrollTrigger.update);
 const heroTime = document.getElementById('hero-time');
 const updateClock = () => {
   if (heroTime) heroTime.textContent =
-    new Date().toLocaleTimeString('en-SG', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+    new Date().toLocaleTimeString('en-SG', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 };
 updateClock();
 setInterval(updateClock, 1000);
@@ -39,8 +51,8 @@ const dot   = document.getElementById('cursor-dot');
 const ring  = document.getElementById('cursor-ring');
 const label = document.getElementById('cursor-label');
 
-let mouse  = { x: window.innerWidth/2,  y: window.innerHeight/2 };
-let ringXY = { x: window.innerWidth/2,  y: window.innerHeight/2 };
+let mouse  = { x: window.innerWidth / 2,  y: window.innerHeight / 2 };
+let ringXY = { x: window.innerWidth / 2,  y: window.innerHeight / 2 };
 const LERP = 0.11;
 
 document.addEventListener('mousemove', e => {
@@ -48,15 +60,12 @@ document.addEventListener('mousemove', e => {
   mouse.y = e.clientY;
   gsap.set(dot, { x: mouse.x, y: mouse.y });
 });
-
-// Lerp ring with GSAP ticker
 gsap.ticker.add(() => {
   ringXY.x += (mouse.x - ringXY.x) * LERP;
   ringXY.y += (mouse.y - ringXY.y) * LERP;
   gsap.set(ring, { x: ringXY.x, y: ringXY.y });
 });
 
-// Cursor hover state + label
 function setCursorHover(text = '') {
   document.body.classList.add('cursor-hover');
   if (label) label.textContent = text;
@@ -66,31 +75,22 @@ function clearCursorHover() {
   if (label) label.textContent = '';
 }
 
-// Project cards → "View"
 document.querySelectorAll('.project-card').forEach(el => {
   el.addEventListener('mouseenter', () => setCursorHover('View'));
   el.addEventListener('mouseleave', clearCursorHover);
 });
-
-// Links → "Go"
 document.querySelectorAll('a, .pill-link').forEach(el => {
   el.addEventListener('mouseenter', () => setCursorHover('→'));
   el.addEventListener('mouseleave', clearCursorHover);
 });
-
-// Skill tags → "Skill" (just expand, no text)
 document.querySelectorAll('.skill-tag').forEach(el => {
   el.addEventListener('mouseenter', () => setCursorHover(''));
   el.addEventListener('mouseleave', clearCursorHover);
 });
-
-// Buttons → expand only
 document.querySelectorAll('button, .cta-button').forEach(el => {
   el.addEventListener('mouseenter', () => setCursorHover(''));
   el.addEventListener('mouseleave', clearCursorHover);
 });
-
-// Click squish
 document.addEventListener('mousedown', () => {
   document.body.classList.add('cursor-drag');
   gsap.to(ring, { scale: 0.75, duration: 0.2, ease: 'power2.out' });
@@ -106,25 +106,20 @@ document.addEventListener('mouseup', () => {
 document.querySelectorAll('.cta-button, .nav-logo, .pill-link--accent').forEach(btn => {
   btn.addEventListener('mousemove', e => {
     const rect = btn.getBoundingClientRect();
-    const cx = rect.left + rect.width  / 2;
-    const cy = rect.top  + rect.height / 2;
-    const dx = (e.clientX - cx) * 0.35;
-    const dy = (e.clientY - cy) * 0.35;
+    const dx = (e.clientX - rect.left - rect.width  / 2) * 0.35;
+    const dy = (e.clientY - rect.top  - rect.height / 2) * 0.35;
     gsap.to(btn, { x: dx, y: dy, duration: 0.4, ease: 'power2.out' });
   });
-  btn.addEventListener('mouseleave', () => {
-    gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
-  });
+  btn.addEventListener('mouseleave', () =>
+    gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' })
+  );
 });
 
 /* ═══════════════════════════════════════════
-   TEXT LINE SPLITTER (no external lib)
-   Wraps each line in .split-line > .split-line-inner
+   TEXT LINE SPLITTER
 ═══════════════════════════════════════════ */
 function splitTextToLines(el) {
-  const text = el.innerHTML;
-  // Split on <br> tags
-  const parts = text.split(/<br\s*\/?>/gi);
+  const parts = el.innerHTML.split(/<br\s*\/?>/gi);
   el.innerHTML = parts.map(p =>
     `<span class="split-line"><span class="split-line-inner">${p}</span></span>`
   ).join('');
@@ -132,60 +127,63 @@ function splitTextToLines(el) {
 }
 
 /* ═══════════════════════════════════════════
-   HERO ENTRANCE ANIMATION
+   BIDIRECTIONAL SCROLL TRIGGER HELPER
+   ─────────────────────────────────────────
+   start: 'top bottom'    → trigger fires as element enters from bottom
+                            AND when it fully exits at the bottom (onLeaveBack)
+   end:   'bottom top'    → trigger fires when element is 100% gone at top (onLeave)
+                            AND when it just re-enters from top (onEnterBack)
+   This means reset only happens when element is FULLY off-screen.
 ═══════════════════════════════════════════ */
-function initHero() {
-  const tl = gsap.timeline({ delay: 0.2 });
+function bidir(triggerEl, {
+  hiddenVars,
+  visibleVars,
+  resetVars,
+  start = 'top bottom',
+  end   = 'bottom top',
+  targets,
+}) {
+  const els   = targets || triggerEl;
+  const reset = resetVars || { ...hiddenVars, duration: undefined, delay: undefined, stagger: undefined };
 
-  // Eyebrow
-  tl.to('.hero-eyebrow', {
-    opacity: 1, y: 0,
-    duration: 0.8, ease: 'power3.out'
-  }, 0.1);
-
-  // Title lines — mask wipe-up
-  const titleInners = document.querySelectorAll('.hero-title-line .split-line-inner');
-  tl.to(titleInners, {
-    y: '0%',
-    duration: 1.1,
-    ease: 'power4.out',
-    stagger: 0.12
-  }, 0.3);
-
-  // Tagline
-  tl.to('.hero-tagline', {
-    opacity: 1,
-    duration: 0.9, ease: 'power3.out'
-  }, 0.85);
-
-  // Meta + scroll indicator
-  tl.to(['.hero-scroll-indicator', '.hero-meta'], {
-    opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power2.out'
-  }, 1.1);
-
-  // Scroll indicator bounce loop
-  gsap.to('.scroll-arrow', {
-    y: 8, opacity: 0.4,
-    repeat: -1, yoyo: true,
-    duration: 1.4, ease: 'sine.inOut',
-    delay: 1.8
+  ScrollTrigger.create({
+    trigger: triggerEl,
+    start,
+    end,
+    onEnter:     () => gsap.to(els, { ...visibleVars }),
+    onEnterBack: () => gsap.to(els, { ...visibleVars, delay: 0 }),
+    onLeave:     () => gsap.set(els, reset),
+    onLeaveBack: () => gsap.set(els, reset),
   });
 }
 
-// Prep hero title lines for mask animation
+/* ═══════════════════════════════════════════
+   HERO ENTRANCE (one-shot on load)
+═══════════════════════════════════════════ */
 document.querySelectorAll('.hero-title-line').forEach(line => {
-  const inner = line.querySelector('.split-line-inner') || line;
   if (!line.querySelector('.split-line-inner')) {
-    const text = line.innerHTML;
-    line.innerHTML = `<span class="split-line-inner">${text}</span>`;
+    line.innerHTML = `<span class="split-line-inner">${line.innerHTML}</span>`;
   }
   gsap.set(line.querySelector('.split-line-inner'), { y: '110%' });
 });
 
+function initHero() {
+  const tl = gsap.timeline({ delay: 0.2 });
+  tl.to('.hero-eyebrow', { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, 0.1);
+  tl.to(document.querySelectorAll('.hero-title-line .split-line-inner'),
+    { y: '0%', duration: 1.1, ease: 'power4.out', stagger: 0.12 }, 0.3);
+  tl.to('.hero-tagline', { opacity: 1, duration: 0.9, ease: 'power3.out' }, 0.85);
+  tl.to(['.hero-scroll-indicator', '.hero-meta'],
+    { opacity: 1, duration: 0.8, stagger: 0.15, ease: 'power2.out' }, 1.1);
+  gsap.to('.scroll-arrow',
+    { y: 8, opacity: 0.4, repeat: -1, yoyo: true, duration: 1.4, ease: 'sine.inOut', delay: 1.8 });
+}
 window.addEventListener('load', initHero);
 
 /* ═══════════════════════════════════════════
-   SECTION TITLE REVEALS (scroll-triggered mask)
+   SECTION TITLE REVEALS — bidirectional mask
+   start/end span full element so reset only
+   happens when 100% off-screen
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.section-title, .contact-title').forEach(el => {
   const lines = splitTextToLines(el);
@@ -193,239 +191,226 @@ document.querySelectorAll('.section-title, .contact-title').forEach(el => {
 
   ScrollTrigger.create({
     trigger: el,
-    start: 'top 82%',
-    onEnter: () => {
-      gsap.to(lines, {
-        y: '0%',
-        duration: 1.0,
-        ease: 'power4.out',
-        stagger: 0.1
-      });
-    },
-    once: true
+    start: 'top bottom',    // element enters from bottom of viewport
+    end:   'bottom top',    // element fully exits at top of viewport
+    onEnter:     () => gsap.to(lines, { y: '0%', duration: 1.0, ease: 'power4.out', stagger: 0.1 }),
+    onEnterBack: () => gsap.to(lines, { y: '0%', duration: 1.0, ease: 'power4.out', stagger: 0.1 }),
+    onLeave:     () => gsap.set(lines, { y: '110%' }),
+    onLeaveBack: () => gsap.set(lines, { y: '110%' }),
   });
 });
 
 /* ═══════════════════════════════════════════
-   SECTION NUMBERS  (fade + slide in)
+   SECTION NUMBERS — bidirectional
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.section-number').forEach(el => {
-  gsap.set(el, { opacity: 0, x: -12 });
-  ScrollTrigger.create({
-    trigger: el,
-    start: 'top 85%',
-    onEnter: () => gsap.to(el, { opacity: 1, x: 0, duration: 0.7, ease: 'power3.out' }),
-    once: true
+  gsap.set(el, { opacity: 0, x: -32 });
+  bidir(el, {
+    hiddenVars:  { opacity: 0, x: -32 },
+    visibleVars: { opacity: 1, x: 0, duration: 0.9, ease: 'power3.out' },
+    resetVars:   { opacity: 0, x: -32 },
   });
 });
 
 /* ═══════════════════════════════════════════
-   ABOUT BIO TEXT — word/line reveal
+   ABOUT — bio text, links, facts
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.about-lead, .about-body, .contact-body').forEach(el => {
-  gsap.set(el, { opacity: 0, y: 28 });
-  ScrollTrigger.create({
-    trigger: el, start: 'top 82%',
-    onEnter: () => gsap.to(el, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }),
-    once: true
+  gsap.set(el, { opacity: 0, y: 32 });
+  bidir(el, {
+    hiddenVars:  { opacity: 0, y: 32 },
+    visibleVars: { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' },
+    resetVars:   { opacity: 0, y: 32 },
+  });
+});
+
+const aboutLinks = document.querySelector('.about-links');
+if (aboutLinks) {
+  gsap.set(aboutLinks, { opacity: 0, y: 20 });
+  bidir(aboutLinks, {
+    hiddenVars:  { opacity: 0, y: 20 },
+    visibleVars: { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' },
+    resetVars:   { opacity: 0, y: 20 },
+  });
+}
+
+document.querySelectorAll('.fact').forEach((fact, i) => {
+  gsap.set(fact, { opacity: 0, x: 20 });
+  bidir(fact, {
+    hiddenVars:  { opacity: 0, x: 20 },
+    visibleVars: { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: i * 0.06 },
+    resetVars:   { opacity: 0, x: 20 },
   });
 });
 
 /* ═══════════════════════════════════════════
-   CLIP-PATH REVEALS  (wipe-up effect)
-   Used for: about photo, any .clip-reveal elements
+   ABOUT PHOTO — clip-path wipe
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.about-photo-frame').forEach(el => {
   gsap.set(el, { clipPath: 'inset(100% 0 0 0)' });
   ScrollTrigger.create({
-    trigger: el, start: 'top 80%',
-    onEnter: () => gsap.to(el, {
-      clipPath: 'inset(0% 0 0 0)',
-      duration: 1.1, ease: 'power4.inOut'
-    }),
-    once: true
+    trigger: el,
+    start: 'top bottom',
+    end:   'bottom top',
+    onEnter:     () => gsap.to(el, { clipPath: 'inset(0% 0 0 0)', duration: 1.1, ease: 'power4.inOut' }),
+    onEnterBack: () => gsap.to(el, { clipPath: 'inset(0% 0 0 0)', duration: 1.1, ease: 'power4.inOut' }),
+    onLeave:     () => gsap.set(el, { clipPath: 'inset(100% 0 0 0)' }),
+    onLeaveBack: () => gsap.set(el, { clipPath: 'inset(100% 0 0 0)' }),
   });
 });
 
 /* ═══════════════════════════════════════════
-   ABOUT LINKS + FACTS (fade stagger)
-═══════════════════════════════════════════ */
-const aboutLinks = document.querySelector('.about-links');
-const aboutFacts = document.querySelectorAll('.fact');
-
-if (aboutLinks) {
-  gsap.set(aboutLinks, { opacity: 0, y: 16 });
-  ScrollTrigger.create({
-    trigger: aboutLinks, start: 'top 85%',
-    onEnter: () => gsap.to(aboutLinks, { opacity:1, y:0, duration:0.8, ease:'power3.out' }),
-    once: true
-  });
-}
-
-aboutFacts.forEach((fact, i) => {
-  gsap.set(fact, { opacity: 0, x: 16 });
-  ScrollTrigger.create({
-    trigger: fact, start: 'top 88%',
-    onEnter: () => gsap.to(fact, {
-      opacity: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: i * 0.07
-    }),
-    once: true
-  });
-});
-
-/* ═══════════════════════════════════════════
-   TIMELINE ITEMS — stagger reveal
+   TIMELINE ITEMS — bidirectional stagger
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.timeline-item').forEach((item, i) => {
+  gsap.set(item, { opacity: 0, y: 36 });
   ScrollTrigger.create({
-    trigger: item, start: 'top 82%',
-    onEnter: () => gsap.to(item, {
-      opacity: 1, y: 0,
-      duration: 0.85, ease: 'power3.out',
-      delay: (i % 3) * 0.08   // relative stagger within sections
-    }),
-    once: true
+    trigger: item,
+    start: 'top bottom',
+    end:   'bottom top',
+    onEnter:     () => gsap.to(item, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out', delay: (i % 3) * 0.08 }),
+    onEnterBack: () => gsap.to(item, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }),
+    onLeave:     () => gsap.set(item, { opacity: 0, y: 36 }),
+    onLeaveBack: () => gsap.set(item, { opacity: 0, y: 36 }),
   });
 });
 
 /* ═══════════════════════════════════════════
-   SKILL CATEGORIES — stagger
+   SKILL CATEGORIES — bidirectional
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.skill-category').forEach((cat, i) => {
-  ScrollTrigger.create({
-    trigger: cat, start: 'top 84%',
-    onEnter: () => gsap.to(cat, {
-      opacity: 1, y: 0, duration: 0.75, ease: 'power3.out', delay: i * 0.1
-    }),
-    once: true
-  });
-});
-
-// Individual skill tags — pop in with stagger
-document.querySelectorAll('.skill-category').forEach(cat => {
+  gsap.set(cat, { opacity: 0, y: 28 });
   const tags = cat.querySelectorAll('.skill-tag');
-  gsap.set(tags, { opacity: 0, y: 14 });
+  gsap.set(tags, { opacity: 0, y: 16 });
+
   ScrollTrigger.create({
-    trigger: cat, start: 'top 80%',
-    onEnter: () => gsap.to(tags, {
-      opacity: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.06
-    }),
-    once: true
+    trigger: cat,
+    start: 'top bottom',
+    end:   'bottom top',
+    onEnter: () => {
+      gsap.to(cat,  { opacity: 1, y: 0, duration: 0.7,  ease: 'power3.out', delay: i * 0.08 });
+      gsap.to(tags, { opacity: 1, y: 0, duration: 0.5,  ease: 'power3.out', stagger: 0.06, delay: i * 0.08 + 0.12 });
+    },
+    onEnterBack: () => {
+      gsap.to(cat,  { opacity: 1, y: 0, duration: 0.7,  ease: 'power3.out' });
+      gsap.to(tags, { opacity: 1, y: 0, duration: 0.5,  ease: 'power3.out', stagger: 0.06, delay: 0.1 });
+    },
+    onLeave:     () => { gsap.set(cat, { opacity: 0, y: 28 }); gsap.set(tags, { opacity: 0, y: 16 }); },
+    onLeaveBack: () => { gsap.set(cat, { opacity: 0, y: 28 }); gsap.set(tags, { opacity: 0, y: 16 }); },
   });
 });
 
 /* ═══════════════════════════════════════════
-   PROJECT CARDS — clip-path wipe + stagger
+   PROJECT CARDS — bidirectional clip-path
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.project-card').forEach((card, i) => {
   gsap.set(card, { clipPath: 'inset(100% 0 0 0)', opacity: 1 });
   ScrollTrigger.create({
-    trigger: card, start: 'top 85%',
-    onEnter: () => gsap.to(card, {
-      clipPath: 'inset(0% 0 0 0)',
-      duration: 0.95, ease: 'power4.inOut',
-      delay: (i % 2) * 0.12
-    }),
-    once: true
+    trigger: card,
+    start: 'top bottom',
+    end:   'bottom top',
+    onEnter:     () => gsap.to(card, { clipPath: 'inset(0% 0 0 0)', duration: 0.95, ease: 'power4.inOut', delay: (i % 3) * 0.1 }),
+    onEnterBack: () => gsap.to(card, { clipPath: 'inset(0% 0 0 0)', duration: 0.95, ease: 'power4.inOut' }),
+    onLeave:     () => gsap.set(card, { clipPath: 'inset(100% 0 0 0)' }),
+    onLeaveBack: () => gsap.set(card, { clipPath: 'inset(100% 0 0 0)' }),
   });
 });
 
 /* ═══════════════════════════════════════════
-   INTEREST ITEMS — stagger
+   INTEREST ITEMS — bidirectional
 ═══════════════════════════════════════════ */
 document.querySelectorAll('.interest-item').forEach((item, i) => {
+  gsap.set(item, { opacity: 0, y: 28 });
   ScrollTrigger.create({
-    trigger: item, start: 'top 84%',
-    onEnter: () => gsap.to(item, {
-      opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: i * 0.1
-    }),
-    once: true
+    trigger: item,
+    start: 'top bottom',
+    end:   'bottom top',
+    onEnter:     () => gsap.to(item, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: i * 0.08 }),
+    onEnterBack: () => gsap.to(item, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }),
+    onLeave:     () => gsap.set(item, { opacity: 0, y: 28 }),
+    onLeaveBack: () => gsap.set(item, { opacity: 0, y: 28 }),
   });
 });
 
 /* ═══════════════════════════════════════════
-   CONTACT — eyebrow + cta
+   CONTACT — eyebrow, cta, socials
 ═══════════════════════════════════════════ */
-const contactEyebrow = document.querySelector('.contact-eyebrow');
-const ctaButton = document.querySelector('.cta-button');
-const contactSocials = document.querySelector('.contact-socials');
-
-[contactEyebrow, ctaButton, contactSocials].forEach((el, i) => {
+['.contact-eyebrow', '.cta-button', '.contact-socials'].forEach((sel, i) => {
+  const el = document.querySelector(sel);
   if (!el) return;
-  gsap.set(el, { opacity: 0, y: 20 });
-  ScrollTrigger.create({
-    trigger: el, start: 'top 88%',
-    onEnter: () => gsap.to(el, {
-      opacity: 1, y: 0, duration: 0.75, ease: 'power3.out', delay: i * 0.12
-    }),
-    once: true
+  gsap.set(el, { opacity: 0, y: 24 });
+  bidir(el, {
+    hiddenVars:  { opacity: 0, y: 24 },
+    visibleVars: { opacity: 1, y: 0, duration: 0.75, ease: 'power3.out', delay: i * 0.1 },
+    resetVars:   { opacity: 0, y: 24 },
   });
 });
 
 /* ═══════════════════════════════════════════
    SCROLL VELOCITY SKEW (Floema signature)
 ═══════════════════════════════════════════ */
-let skewSetter = gsap.quickSetter('.section', 'skewY', 'deg');
-let clamp = gsap.utils.clamp(-2.5, 2.5);
-let lastScrollTop = 0;
-let velocity = 0;
-let raf;
+let skewSetter  = gsap.quickSetter('.section', 'skewY', 'deg');
+let clampSkew   = gsap.utils.clamp(-2.5, 2.5);
+let lastScrollY = 0;
 
-function updateSkew() {
-  const scrollTop = lenis.scroll;
-  velocity = (scrollTop - lastScrollTop) * 0.05;
-  lastScrollTop = scrollTop;
-  skewSetter(clamp(velocity));
-  raf = requestAnimationFrame(updateSkew);
-}
-updateSkew();
+(function tick() {
+  const velocity = (lenis.scroll - lastScrollY) * 0.05;
+  lastScrollY = lenis.scroll;
+  skewSetter(clampSkew(velocity));
+  requestAnimationFrame(tick);
+})();
 
-// Ease back to 0 on scroll stop
 lenis.on('scroll', () => {
   clearTimeout(window._skewReset);
   window._skewReset = setTimeout(() => {
-    gsap.to('.section', {
-      skewY: 0, duration: 0.8, ease: 'power3.out', overwrite: true
-    });
-  }, 180);
+    gsap.to('.section', { skewY: 0, duration: 0.8, ease: 'power3.out', overwrite: true });
+  }, 160);
 });
 
 /* ═══════════════════════════════════════════
-   NAVIGATION — scroll state + mobile toggle
+   NAVIGATION
 ═══════════════════════════════════════════ */
 const nav       = document.getElementById('nav');
 const navToggle = document.getElementById('nav-toggle');
 const navLinks  = document.getElementById('nav-links');
 
-lenis.on('scroll', ({ scroll }) => {
-  nav.classList.toggle('scrolled', scroll > 60);
-});
+lenis.on('scroll', ({ scroll }) => nav.classList.toggle('scrolled', scroll > 60));
 
 navToggle.addEventListener('click', () => {
   navLinks.classList.toggle('open');
   navToggle.classList.toggle('open');
 });
-navLinks.querySelectorAll('a').forEach(a => {
+navLinks.querySelectorAll('a').forEach(a =>
   a.addEventListener('click', () => {
     navLinks.classList.remove('open');
     navToggle.classList.remove('open');
-  });
-});
+  })
+);
 
 /* Active nav highlight */
 const sectionEls = document.querySelectorAll('section[id]');
 const navAnchors = document.querySelectorAll('.nav-links a');
-const sectionObs = new IntersectionObserver(entries => {
+new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       const id = e.target.id;
-      navAnchors.forEach(a => {
-        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
-      });
+      navAnchors.forEach(a =>
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id)
+      );
     }
   });
-}, { rootMargin: '-38% 0px -55% 0px' });
-sectionEls.forEach(s => sectionObs.observe(s));
+}, { rootMargin: '-38% 0px -55% 0px' }).observe.bind(null);
+sectionEls.forEach(s => {
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navAnchors.forEach(a =>
+          a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id)
+        );
+      }
+    });
+  }, { rootMargin: '-38% 0px -55% 0px' }).observe(s);
+});
 
 /* ═══════════════════════════════════════════
    SMOOTH ANCHOR SCROLL (via Lenis)
