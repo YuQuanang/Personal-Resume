@@ -36,6 +36,8 @@ a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 img { display: block; max-width: 100%; }
 
+a, button, input, textarea, select, [role="button"] { cursor: none; }
+
 /* ═══════════════════════════════════════════
    CUSTOM CURSOR
 ═══════════════════════════════════════════ */
@@ -309,7 +311,6 @@ body.cursor-drag .cursor-ring {
 }
 .pill-link:hover::before { transform: translateX(0); }
 .pill-link:hover { color: var(--yellow); border-color: var(--green); }
-
 .pill-link--accent { background: var(--green); color: var(--text); border-color: var(--green); }
 .pill-link--accent::before { display: none; }
 .pill-link--accent:hover { background: var(--green-light); border-color: var(--green-light); color: var(--yellow); }
@@ -551,9 +552,11 @@ body.cursor-drag .cursor-ring {
 .contact-title em { color: var(--green-light); }
 .contact-body { color: var(--text-muted); font-size: 1.02rem; line-height: 1.82; margin-bottom: 2.5rem; }
 .cta-button {
-  display: inline-flex; align-items: center;
-  padding: 1rem 2.5rem; background: var(--green); color: var(--text);
-  font-size: 0.88rem; font-weight: 600; letter-spacing: 0.07em; border-radius: 2px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 1.2rem 2.5rem; border-radius: 40px;
+  background: var(--text); color: var(--bg);
+  font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 500;
+  text-decoration: none; cursor: none;
   transition: background 0.35s, transform 0.35s var(--ease-out);
   position: relative; overflow: hidden; isolation: isolate;
 }
