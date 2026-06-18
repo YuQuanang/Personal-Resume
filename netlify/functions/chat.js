@@ -136,7 +136,7 @@ export default async (req) => {
         maxTokens: 80,
         temperature: 0,
       });
-      return refusalResult.toDataStreamResponse();
+      return refusalResult.toTextStreamResponse();
     }
 
     const systemPrompt = buildSystemPrompt(matchedChunks);
@@ -149,7 +149,7 @@ export default async (req) => {
       temperature: 0.3,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
 
   } catch (err) {
     console.error('[chat] ERROR:', err?.message || err);
