@@ -89,7 +89,7 @@ function MessageBubble({ message, isLast, onSuggestionClick }) {
       {!isUser && (
         <div className="chat-msg-avatar" aria-hidden="true"><IconBot /></div>
       )}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, maxWidth: '100%' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1, maxWidth: '100%', alignItems: isUser ? 'flex-end' : 'flex-start' }}>
         <div className={`chat-msg-bubble ${isUser ? 'chat-msg-bubble--user' : 'chat-msg-bubble--assistant'}`}>
           {/* ReactMarkdown safely parses the response and renders HTML lists, bold tags, etc. */}
           <ReactMarkdown>{textContent}</ReactMarkdown>
@@ -123,7 +123,7 @@ export function ChatWidget() {
   const messagesContainerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const isUserScrollingRef = useRef(false);
+  // const isUserScrollingRef = useRef(false);
 
   const [messages, setMessages] = useState([]);
   const [status, setStatus] = useState('idle');
@@ -132,12 +132,12 @@ export function ChatWidget() {
   const isLoading = status === 'submitted' || status === 'streaming';
 
   // Track if the user has manually scrolled up from the bottom.
-  const handleScroll = (e) => {
-    const container = e.target;
-    // Allow a 50px buffer for the bottom
-    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
-    isUserScrollingRef.current = !isAtBottom;
-  };
+  // const handleScroll = (e) => {
+  //   const container = e.target;
+  //   // Allow a 50px buffer for the bottom
+  //   const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+  //   isUserScrollingRef.current = !isAtBottom;
+  // };
 
   // Prevent background scrolling via JS instead of hiding the scrollbar
   const handleGlobalScroll = (e) => {

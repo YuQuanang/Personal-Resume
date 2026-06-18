@@ -11,20 +11,45 @@ export function CustomCursor() {
     const ring = ringRef.current;
     const label = labelRef.current;
 
+    // Use gsap.quickSetter for maximum performance tracking (bypasses tween engine)
+    const setDotX = gsap.quickSetter(dot, "x", "px");
+    const setDotY = gsap.quickSetter(dot, "y", "px");
+    const setRingX = gsap.quickSetter(ring, "x", "px");
+    const setRingY = gsap.quickSetter(ring, "y", "px");
+
     let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     let ringXY = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     const LERP = 0.11;
+    let isActive = false;
+
+    // Start completely hidden so there's no weird snap on load
+    gsap.set([dot, ring], { opacity: 0 });
+
+    const showCursor = () => {
+      if (isActive) return;
+      isActive = true;
+      gsap.to([dot, ring], { opacity: 1, duration: 0.2, overwrite: 'auto' });
+    };
+
+    const hideCursor = () => {
+      if (!isActive) return;
+      isActive = false;
+      gsap.to([dot, ring], { opacity: 0, duration: 0.2, overwrite: 'auto' });
+    };
 
     const onMouseMove = (e) => {
+      showCursor();
       mouse.x = e.clientX;
       mouse.y = e.clientY;
-      gsap.set(dot, { x: mouse.x, y: mouse.y });
+      setDotX(mouse.x);
+      setDotY(mouse.y);
     };
 
     const tick = () => {
       ringXY.x += (mouse.x - ringXY.x) * LERP;
       ringXY.y += (mouse.y - ringXY.y) * LERP;
-      gsap.set(ring, { x: ringXY.x, y: ringXY.y });
+      setRingX(ringXY.x);
+      setRingY(ringXY.y);
     };
 
     const setCursorHover = (text = '') => {
@@ -49,6 +74,11 @@ export function CustomCursor() {
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mousedown', onMouseDown);
     window.addEventListener('mouseup', onMouseUp);
+    
+    // Hide custom cursor when mouse leaves the browser window entirely
+    document.addEventListener('mouseleave', hideCursor);
+    document.addEventListener('mouseenter', showCursor);
+
     gsap.ticker.add(tick);
 
     // Event delegation for links and interactive elements
@@ -79,6 +109,8 @@ export function CustomCursor() {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('mousedown', onMouseDown);
       window.removeEventListener('mouseup', onMouseUp);
+      document.removeEventListener('mouseleave', hideCursor);
+      document.removeEventListener('mouseenter', showCursor);
       document.removeEventListener('mouseover', onMouseOver);
       document.removeEventListener('mouseout', onMouseOut);
       gsap.ticker.remove(tick);
