@@ -3,26 +3,19 @@ import { createClient } from '@supabase/supabase-js';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { streamText } from 'ai';
 
-const { NVIDIA_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_KEY } = process.env;
-
-// Initialize clients (these run once per lambda container cold boot)
-const nvidia = createOpenAICompatible({
-  name: 'nvidia',
-  baseURL: 'https://integrate.api.nvidia.com/v1',
-  apiKey: NVIDIA_API_KEY,
-});
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+let nvidia;
+let supabase;
 
 const REFUSAL_MESSAGE =
   "I'm here to answer questions about Yu Quan's professional background, skills, education, and interests. How can I help you with that? 😊";
 
 async function getQueryEmbedding(text) {
+  const apiKey = process.env.NVIDIA_API_KEY || Netlify.env.get('NVIDIA_API_KEY');
   const response = await fetch('https://integrate.api.nvidia.com/v1/embeddings', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${NVIDIA_API_KEY}`,
+      'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
       model: 'nvidia/nv-embedqa-e5-v5',
@@ -81,6 +74,25 @@ export default async (req) => {
     const body = await req.json();
     const { messages } = body;
 
+    if (!nvidia || !supabase) {
+      // Netlify v2 functions might provide env variables via process.env or Netlify.env
+      const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY || Netlify.env.get('NVIDIA_API_KEY');
+      const SUPABASE_URL = process.env.SUPABASE_URL || Netlify.env.get('SUPABASE_URL');
+      const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || Netlify.env.get('SUPABASE_SERVICE_KEY');
+
+      if (!NVIDIA_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
+        return new Response(JSON.stringify({ error: 'Missing environment variables in Netlify dashboard.' }), { status: 500 });
+      }
+
+      nvidia = createOpenAICompatible({
+        name: 'nvidia',
+        baseURL: 'https://integrate.api.nvidia.com/v1',
+        apiKey: NVIDIA_API_KEY,
+      });
+
+      supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+    }
+
     if (!Array.isArray(messages) || messages.length === 0) {
       return new Response(JSON.stringify({ error: 'messages must be a non-empty array.' }), { status: 400 });
     }
@@ -113,7 +125,7 @@ export default async (req) => {
 
     if (rpcError) {
       console.error('Supabase RPC error:', rpcError.message);
-      return new Response(JSON.stringify({ error: 'Database search failed.' }), { status: 500 });
+      return new Response(JSON.stringify({ error: `Supabase RPC error: ${rpcError.message}` }), { status: 500 });
     }
 
     if (!matchedChunks || matchedChunks.length === 0) {
@@ -141,7 +153,7 @@ export default async (req) => {
 
   } catch (err) {
     console.error('[chat] ERROR:', err?.message || err);
-    return new Response(JSON.stringify({ error: 'An internal error occurred.' }), { status: 500 });
+    return new Response(JSON.stringify({ error: `Function crashed: ${err?.message || String(err)}` }), { status: 500 });
   }
 };
 
