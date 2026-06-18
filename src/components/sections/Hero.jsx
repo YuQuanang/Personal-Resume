@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { SplitText } from '../ui/SplitText';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 

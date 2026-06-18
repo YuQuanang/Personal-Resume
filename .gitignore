@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Secrets — NEVER commit these
+.env
+
+# Resume PDF — keep off public repos
+resume.pdf

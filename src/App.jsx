@@ -15,6 +15,7 @@ import { Projects } from './components/sections/Projects';
 import { Interests } from './components/sections/Interests';
 import { Contact } from './components/sections/Contact';
 import { Footer } from './components/sections/Footer';
+import { ChatWidget } from './components/ui/ChatWidget';
 
 function Layout() {
   const parallaxRef = useRef(null);
@@ -78,6 +79,9 @@ function Layout() {
       </main>
       
       <Footer />
+
+      {/* Floating AI chat assistant — fixed position, renders above all content */}
+      <ChatWidget />
     </>
   );
 }
