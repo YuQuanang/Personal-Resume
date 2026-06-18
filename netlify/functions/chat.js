@@ -10,7 +10,7 @@ const REFUSAL_MESSAGE =
   "I'm here to answer questions about Yu Quan's professional background, skills, education, and interests. How can I help you with that? 😊";
 
 async function getQueryEmbedding(text) {
-  const apiKey = process.env.NVIDIA_API_KEY || Netlify.env.get('NVIDIA_API_KEY');
+  const apiKey = process.env.NVIDIA_API_KEY;
   const response = await fetch('https://integrate.api.nvidia.com/v1/embeddings', {
     method: 'POST',
     headers: {
@@ -76,9 +76,9 @@ export default async (req) => {
 
     if (!nvidia || !supabase) {
       // Netlify v2 functions might provide env variables via process.env or Netlify.env
-      const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY || Netlify.env.get('NVIDIA_API_KEY');
-      const SUPABASE_URL = process.env.SUPABASE_URL || Netlify.env.get('SUPABASE_URL');
-      const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || Netlify.env.get('SUPABASE_SERVICE_KEY');
+      const NVIDIA_API_KEY = process.env.NVIDIA_API_KEY;
+      const SUPABASE_URL = process.env.SUPABASE_URL;
+      const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 
       if (!NVIDIA_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
         return new Response(JSON.stringify({ error: 'Missing environment variables in Netlify dashboard.' }), { status: 500 });

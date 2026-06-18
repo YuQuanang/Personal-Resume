@@ -212,7 +212,16 @@ export function ChatWidget() {
         body: JSON.stringify({ messages: [...messages, userMsg] }),
       });
 
-      if (!res.ok) throw new Error('API error: ' + res.statusText);
+      if (!res.ok) {
+        let errMessage = res.statusText;
+        try {
+          const errData = await res.json();
+          if (errData.error) errMessage = errData.error;
+        } catch (e) {
+          // ignore json parse error
+        }
+        throw new Error(errMessage);
+      }
 
       // 3. Optimistically create assistant message placeholder
       const assistantId = crypto.randomUUID();
