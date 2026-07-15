@@ -28,3 +28,6 @@ dist-ssr
 
 # Resume PDF — keep off public repos
 resume.pdf
+
+# Local Netlify folder
+.netlify

@@ -13,7 +13,7 @@ It features a premium design system with complex bidirectional GSAP animations, 
 | **Scrolling** | [Lenis](https://lenis.studiofreight.com/) |
 | **Styling** | Vanilla CSS (global scoped) |
 | **AI Chatbot** | [Vercel AI SDK](https://sdk.vercel.ai/) + NVIDIA NIM (`openai/gpt-oss-120b`) |
-| **Embeddings** | NVIDIA `nv-embedqa-e5-v5` (1024-dim vectors) |
+| **Embeddings** | NVIDIA `nv-embedqa-e5-v5` (256-dim vectors via MRL truncation) |
 | **Vector Search** | In-memory cosine similarity (static JSON — no database!) |
 | **Deployment** | [Netlify](https://netlify.com/) (frontend + serverless function) |
 
