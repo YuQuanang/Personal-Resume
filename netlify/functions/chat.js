@@ -147,7 +147,7 @@ export default async (req) => {
     // ── 5. No relevant context — stream the refusal message ───────────────
     if (matchedChunks.length === 0) {
       const refusalResult = streamText({
-        model: nvidia('openai/gpt-oss-120b'),
+        model: nvidia('meta/llama-3.1-8b-instruct'),
         system: `You are Yu Quan Ang's portfolio assistant. You must ONLY reply with this exact sentence and nothing else: "${REFUSAL_MESSAGE}"`,
         messages: [{ role: 'user', content: 'hello' }],
         maxTokens: 80,
@@ -160,7 +160,7 @@ export default async (req) => {
     const systemPrompt = buildSystemPrompt(matchedChunks);
 
     const result = streamText({
-      model: nvidia('openai/gpt-oss-120b'),
+      model: nvidia('meta/llama-3.1-8b-instruct'),
       system: systemPrompt,
       messages: safeMessages,
       maxTokens: 512,
