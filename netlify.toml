@@ -10,6 +10,12 @@
   # No included_files needed — the JSON is baked into the JS bundle at build time.
   node_bundler = "esbuild"
 
+# Per-function timeout override: 26s (Netlify's maximum for synchronous functions).
+# Required because NVIDIA embedding (~2s) + LLM first token (~3-5s) can exceed
+# the default 10-second limit, especially on cold starts.
+[functions.chat]
+  timeout = 26
+
 # ─── Local Development ────────────────────────────────────────────────────────
 # Run `npx netlify dev` instead of `npm run dev` to test functions locally.
 # This starts Vite AND emulates the serverless function on the same port.
