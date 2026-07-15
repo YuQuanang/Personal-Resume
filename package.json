@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:full": "netlify dev",
     "seed": "node seed.js",
     "build": "vite build",
     "lint": "eslint .",

@@ -1,16 +1,11 @@
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { streamText } from 'ai';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { join, dirname } from 'path';
 
 // ─── Load Pre-generated Embeddings ───────────────────────────────────────────
-// Use fileURLToPath + dirname(import.meta.url) so the path always resolves
-// correctly regardless of how Netlify bundles or re-locates the function file.
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const KNOWLEDGE_BASE = JSON.parse(
-  readFileSync(join(__dirname, 'data', 'embeddings.json'), 'utf-8')
-);
+// Imported as a static ES module — esbuild inlines the JSON directly into the
+// bundle at build time, so there are zero file system calls at runtime.
+// This is the only approach that works reliably in Netlify's esbuild bundler.
+import KNOWLEDGE_BASE from './data/embeddings.json';
 
 // ─── Cosine Similarity ────────────────────────────────────────────────────────
 // Computes the cosine similarity between two equal-length float vectors.

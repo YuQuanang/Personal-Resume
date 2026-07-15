@@ -6,9 +6,8 @@
 # ─── Functions Configuration ──────────────────────────────────────────────────
 [functions]
   directory = "netlify/functions"
-  # Include the pre-generated embeddings JSON alongside the function.
-  # Without this, Netlify's bundler may strip the data/ folder from the deployment.
-  included_files = ["netlify/functions/data/**"]
+  # esbuild inlines the embeddings.json import directly into the bundle.
+  # No included_files needed — the JSON is baked into the JS bundle at build time.
   node_bundler = "esbuild"
 
 # ─── Local Development ────────────────────────────────────────────────────────
