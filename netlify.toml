@@ -1,0 +1,22 @@
+# ─── Build Settings ───────────────────────────────────────────────────────────
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# ─── Functions Configuration ──────────────────────────────────────────────────
+[functions]
+  directory = "netlify/functions"
+  # Include the pre-generated embeddings JSON alongside the function.
+  # Without this, Netlify's bundler may strip the data/ folder from the deployment.
+  included_files = ["netlify/functions/data/**"]
+  node_bundler = "esbuild"
+
+# ─── Local Development ────────────────────────────────────────────────────────
+# Run `npx netlify dev` instead of `npm run dev` to test functions locally.
+# This starts Vite AND emulates the serverless function on the same port.
+[dev]
+  command = "npm run dev"
+  targetPort = 5173
+  port = 8888
+  autoLaunch = false
+

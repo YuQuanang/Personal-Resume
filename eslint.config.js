@@ -8,7 +8,7 @@ export default defineConfig([
   globalIgnores(['dist']),
   // Node.js files (server + seed scripts)
   {
-    files: ['server.js', 'seed.js'],
+    files: ['server.js', 'seed.js', 'netlify/functions/**/*.js'],
     extends: [js.configs.recommended],
     languageOptions: {
       globals: { ...globals.node },
@@ -30,7 +30,7 @@ export default defineConfig([
     rules: {
       // React 17+ JSX transform: `import React from 'react'` is not required
       // but harmless — allow it without triggering no-unused-vars.
-      'no-unused-vars': ['error', { varsIgnorePattern: '^React$' }],
+      'no-unused-vars': ['error', { varsIgnorePattern: '^React$', caughtErrorsIgnorePattern: '^_' }],
     },
   },
 ])

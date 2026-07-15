@@ -61,7 +61,6 @@ export function Skills() {
             <h3 className="skill-category-title">Languages</h3>
             <div className="skill-tags">
               <span className="skill-tag">Python</span>
-              <span className="skill-tag">JavaScript</span>
               <span className="skill-tag">SQL</span>
               <span className="skill-tag">Solidity</span>
               <span className="skill-tag">HTML / CSS</span>
@@ -86,6 +85,7 @@ export function Skills() {
             <h3 className="skill-category-title">Tools &amp; Platforms</h3>
             <div className="skill-tags">
               <span className="skill-tag">Git</span>
+              <span className="skill-tag">UiPath</span>
               <span className="skill-tag">Excel</span>
               <span className="skill-tag">Tableau</span>
               <span className="skill-tag">Microsoft Office Suite</span>
@@ -99,7 +99,7 @@ export function Skills() {
             <h3 className="skill-category-title">Methodologies</h3>
             <div className="skill-tags">
               <span className="skill-tag">Waterfall</span>
-              <span className="skill-tag">Agile / Scrum</span>
+              <span className="skill-tag">Agile/Scrum</span>
               <span className="skill-tag">SDLC</span>
               <span className="skill-tag">UAT</span>
               <span className="skill-tag">Data Analytics</span>

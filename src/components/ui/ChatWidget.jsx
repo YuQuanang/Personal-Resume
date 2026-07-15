@@ -217,8 +217,8 @@ export function ChatWidget() {
         try {
           const errData = await res.json();
           if (errData.error) errMessage = errData.error;
-        } catch (e) {
-          // ignore json parse error
+        } catch (_e) {
+          // ignore json parse error — we already have statusText as fallback
         }
         throw new Error(errMessage);
       }
