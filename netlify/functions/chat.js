@@ -64,7 +64,8 @@ async function getQueryEmbedding(text) {
   }
 
   const data = await response.json();
-  return data.data[0].embedding;
+  // Truncate to 256 dims client-side — must match what seed.js stored.
+  return data.data[0].embedding.slice(0, 256);
 }
 
 // ─── System Prompt Builder ────────────────────────────────────────────────────
@@ -112,8 +113,9 @@ export default async (req) => {
       return new Response(JSON.stringify({ error: 'messages must be a non-empty array.' }), { status: 400 });
     }
 
-    // Cap history to prevent context stuffing
-    const MAX_MESSAGES = 20;
+    // Keep only the last 6 messages — enough for conversational context,
+    // but small enough to not bloat the LLM input token count.
+    const MAX_MESSAGES = 6;
     const safeMessages = messages.slice(-MAX_MESSAGES);
 
     const lastUserMsg = [...safeMessages].reverse().find(m => m.role === 'user');
@@ -133,7 +135,9 @@ export default async (req) => {
 
     // ── 3. Embed the user query and retrieve matching chunks ──────────────
     const queryEmbedding = await getQueryEmbedding(queryText);
-    const matchedChunks = retrieveTopChunks(queryEmbedding, 5, 0.2);
+    // Top 3 most relevant chunks only — avoids overwhelming the LLM with
+    // long context and keeps total prompt tokens low for faster generation.
+    const matchedChunks = retrieveTopChunks(queryEmbedding, 3, 0.2);
 
     // ── 4. Initialise the NVIDIA LLM client ──────────────────────────────
     const nvidia = createOpenAICompatible({
@@ -161,7 +165,9 @@ export default async (req) => {
       model: nvidia('openai/gpt-oss-120b'),
       system: systemPrompt,
       messages: safeMessages,
-      maxTokens: 512,
+      // 220 tokens ≈ 165 words — concise but complete for a portfolio Q&A.
+      // Lower token count = faster streaming = stays within Netlify's timeout.
+      maxTokens: 220,
       temperature: 0.3,
     });
 

@@ -115,7 +115,11 @@ async function generateEmbeddings(texts) {
 
     const data = await response.json();
     const sorted = data.data.sort((a, b) => a.index - b.index);
-    allEmbeddings.push(...sorted.map(d => d.embedding));
+    // Truncate from 1024 to 256 dimensions client-side.
+    // The first N dimensions of these embeddings retain strong semantic quality
+    // (MRL-style truncation). This makes embeddings.json ~75% smaller.
+    const DIMS = 256;
+    allEmbeddings.push(...sorted.map(d => d.embedding.slice(0, DIMS)));
 
     // Small delay between batches to respect the API rate limit.
     if (i + BATCH_SIZE < texts.length) {
