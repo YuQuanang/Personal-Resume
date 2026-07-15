@@ -1,42 +1,35 @@
 /**
- * seed.js — One-time Supabase vector database seeder
+ * seed.js — Static In-Memory Vector Search Seeder
  *
- * Run once after setting up your .env and Supabase schema:
+ * Run once whenever you update your resume or personalFacts:
  *   node seed.js
  *
  * What it does:
  *   1. Reads resume.pdf and chunks the text into ~1,000-char sentence-aware pieces.
- *   2. Merges those chunks with a hardcoded personalFacts[] array for context
- *      not captured by the resume (hobbies, personal brand, extra details).
- *   3. Generates NVIDIA NV-EmbedQA-E5-v5 embeddings (4096-dim) for every chunk.
- *   4. Upserts all { content, embedding } rows into Supabase portfolio_documents.
+ *   2. Merges those chunks with a hardcoded personalFacts[] array.
+ *   3. Generates NVIDIA NV-EmbedQA-E5-v5 embeddings for every chunk.
+ *   4. Saves all { content, embedding } objects to netlify/functions/data/embeddings.json
+ *      — a static file bundled with your deployment. No database needed!
  */
 
 import 'dotenv/config';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createClient } from '@supabase/supabase-js';
 
-// pdfjs-dist has proper ESM support and works with Node 22
 import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// ─── Validate Environment ───────────────────────────────────────────────────
-const { NVIDIA_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_KEY } = process.env;
-if (!NVIDIA_API_KEY || !SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
-  console.error('❌  Missing environment variables. Copy .env.example → .env and fill in values.');
+// ─── Validate Environment ────────────────────────────────────────────────────
+const { NVIDIA_API_KEY } = process.env;
+if (!NVIDIA_API_KEY) {
+  console.error('❌  Missing NVIDIA_API_KEY. Copy .env.example → .env and fill in the value.');
   process.exit(1);
 }
 
-// ─── Clients ────────────────────────────────────────────────────────────────
-// Use the service_role key so we can write to the table (bypasses RLS).
-const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-
 // ─── Personal Facts Hardcoded Array ─────────────────────────────────────────
-// This is additional context that a PDF resume may not capture well —
-// personal brand, hobbies, personality, extra details.
-// Update this array with anything you want the bot to know about yourself.
+// Update this array whenever you want the bot to know something new about you.
 const personalFacts = [
   "My name is Yu Quan Ang. I go by Walter among friends. I am a 25-year-old Computer Science and Business graduate from Nanyang Technological University (NTU), Singapore.",
   "I graduated from NTU in May 2026 with a BSc in Computer Science with a Second Major in Business. My GPA is 4.37 out of 5.0.",
@@ -62,10 +55,6 @@ const personalFacts = [
 
 // ─── Text Chunking ───────────────────────────────────────────────────────────
 
-/**
- * cleanPdfText — removes messy PDF whitespace artifacts.
- * PDFs often produce runs of spaces, hyphenated line-breaks, and random newlines.
- */
 function cleanPdfText(raw) {
   return raw
     .replace(/(\w)-\n(\w)/g, '$1$2')   // rejoin hyphenated line breaks
@@ -75,22 +64,13 @@ function cleanPdfText(raw) {
     .trim();
 }
 
-/**
- * chunkBySentence — splits text into chunks of ~targetSize characters.
- * Uses sentence boundaries (. ! ?) as split points so we never cut mid-sentence.
- * Each chunk contains complete sentences and stays close to targetSize chars.
- */
 function chunkBySentence(text, targetSize = 1000) {
-  // Split on sentence-ending punctuation followed by whitespace or end-of-string.
   const sentences = text.split(/(?<=[.!?])\s+/);
   const chunks = [];
   let current = '';
 
   for (const sentence of sentences) {
     if (!sentence.trim()) continue;
-
-    // If adding this sentence would exceed targetSize AND we already have content,
-    // flush the current chunk and start a new one.
     if (current.length + sentence.length > targetSize && current.length > 0) {
       chunks.push(current.trim());
       current = sentence;
@@ -99,19 +79,12 @@ function chunkBySentence(text, targetSize = 1000) {
     }
   }
 
-  // Push any remaining text.
   if (current.trim()) chunks.push(current.trim());
-
   return chunks;
 }
 
 // ─── NVIDIA Embeddings ───────────────────────────────────────────────────────
 
-/**
- * generateEmbeddings — calls the NVIDIA NIM embeddings API.
- * nvidia/nv-embedqa-e5-v5 produces 4096-dimensional vectors.
- * Processes in batches of 10 to stay within API rate limits.
- */
 async function generateEmbeddings(texts) {
   const BATCH_SIZE = 10;
   const allEmbeddings = [];
@@ -129,7 +102,7 @@ async function generateEmbeddings(texts) {
       body: JSON.stringify({
         model: 'nvidia/nv-embedqa-e5-v5',
         input: batch,
-        input_type: 'passage',   // 'passage' for documents to be retrieved
+        input_type: 'passage',
         encoding_format: 'float',
         truncate: 'END',
       }),
@@ -141,11 +114,10 @@ async function generateEmbeddings(texts) {
     }
 
     const data = await response.json();
-    // data.data is an array of { index, embedding } objects.
     const sorted = data.data.sort((a, b) => a.index - b.index);
     allEmbeddings.push(...sorted.map(d => d.embedding));
 
-    // Small delay between batches to be polite to the API.
+    // Small delay between batches to respect the API rate limit.
     if (i + BATCH_SIZE < texts.length) {
       await new Promise(r => setTimeout(r, 300));
     }
@@ -157,16 +129,15 @@ async function generateEmbeddings(texts) {
 // ─── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
-  console.log('\n🌿  Portfolio RAG Seeder\n' + '─'.repeat(40));
+  console.log('\n🌿  Portfolio Embeddings Seeder (Static JSON)\n' + '─'.repeat(50));
 
-  // ── Step 1: Load & chunk the resume PDF ──────────────────────────────────
+  // ── Step 1: Load & chunk the resume PDF ─────────────────────────────────
   const pdfPath = path.join(__dirname, 'resume.pdf');
   let pdfChunks = [];
 
   if (fs.existsSync(pdfPath)) {
     console.log('📄  Reading resume.pdf…');
     const pdfBuffer = fs.readFileSync(pdfPath);
-    // Load the PDF using pdfjs-dist (ESM-compatible, works on Node 22)
     const loadingTask = pdfjsLib.getDocument({ data: new Uint8Array(pdfBuffer) });
     const pdfDoc = await loadingTask.promise;
     let fullText = '';
@@ -184,43 +155,32 @@ async function main() {
     console.warn('    Place your resume at ./resume.pdf and re-run to include it.');
   }
 
-  // ── Step 2: Combine PDF chunks with hardcoded personal facts ─────────────
+  // ── Step 2: Combine PDF chunks with hardcoded personal facts ────────────
   const allChunks = [...pdfChunks, ...personalFacts];
   console.log(`\n📝  Total chunks to embed: ${allChunks.length}`);
   console.log(`    (${pdfChunks.length} from PDF + ${personalFacts.length} from personalFacts[])`);
 
-  // ── Step 3: Generate NVIDIA embeddings ───────────────────────────────────
+  // ── Step 3: Generate NVIDIA embeddings ──────────────────────────────────
   console.log('\n🧠  Generating NVIDIA NV-EmbedQA-E5-v5 embeddings…');
   const embeddings = await generateEmbeddings(allChunks);
   console.log(`    ✓ ${embeddings.length} embeddings generated`);
 
-  // ── Step 4: Build rows and upsert into Supabase ──────────────────────────
-  console.log('\n🗄️   Inserting into Supabase…');
-  const rows = allChunks.map((content, i) => ({
+  // ── Step 4: Save to a static JSON file ──────────────────────────────────
+  const outputDir = path.join(__dirname, 'netlify', 'functions', 'data');
+  const outputPath = path.join(outputDir, 'embeddings.json');
+
+  // Ensure the data directory exists.
+  fs.mkdirSync(outputDir, { recursive: true });
+
+  const payload = allChunks.map((content, i) => ({
     content,
     embedding: embeddings[i],
   }));
 
-  // Insert in batches of 50 to avoid payload size limits.
-  const INSERT_BATCH = 50;
-  let inserted = 0;
-
-  for (let i = 0; i < rows.length; i += INSERT_BATCH) {
-    const batch = rows.slice(i, i + INSERT_BATCH);
-    const { error } = await supabase
-      .from('portfolio_documents')
-      .insert(batch);
-
-    if (error) {
-      console.error(`❌  Supabase insert error at batch ${i}:`, error.message);
-      process.exit(1);
-    }
-    inserted += batch.length;
-    process.stdout.write(`\r    Inserted ${inserted}/${rows.length} rows…`);
-  }
-
-  console.log(`\n\n✅  Seeding complete! ${inserted} chunks stored in portfolio_documents.`);
-  console.log('    You can verify in your Supabase dashboard: Table Editor → portfolio_documents.\n');
+  fs.writeFileSync(outputPath, JSON.stringify(payload));
+  const sizeKB = (fs.statSync(outputPath).size / 1024).toFixed(1);
+  console.log(`\n✅  Done! Saved ${payload.length} chunks → ${outputPath} (${sizeKB} KB)`);
+  console.log('    Commit this file and redeploy Netlify — no database needed! 🚀\n');
 }
 
 main().catch(err => {
